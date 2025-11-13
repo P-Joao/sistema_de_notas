@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><title>Painel do Professor</title></head>
+<body>
+    <h1>Olá, Professor {{ request.user.get_full_name }}!</h1>
+    <p>Este será o seu painel. Em breve, suas turmas aparecerão aqui.</p>
+
+    <p><a href="{% url 'logout' %}">Sair</a></p>
+</body>
+</html>

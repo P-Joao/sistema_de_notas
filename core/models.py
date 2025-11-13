@@ -15,6 +15,10 @@ class Professor(models.Model):
         # Busca o nome completo (ou username) do User associado
         return self.user.get_full_name() or self.user.username
     
+    class Meta:
+        verbose_name = "Professor"
+        verbose_name_plural = "Professores"
+    
 class Aluno(models.Model):
     # Mesmo padrão do Professor.
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="aluno")
@@ -75,6 +79,10 @@ class Avaliacao(models.Model):
 
     def __str__(self):
         return f"{self.titulo} (Peso {self.peso}) - {self.turma.disciplina.codigo}"
+    
+    class Meta:
+        verbose_name = "Avaliação"
+        verbose_name_plural = "Avaliações"
 
 class Nota(models.Model):
     """

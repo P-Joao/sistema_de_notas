@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Avaliação</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        .container { max-width: 600px; }
+        .form-control { width: 95%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        button { background: #28a745; color: white; padding: 10px 15px; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Nova Avaliação</h1>
+        <p><strong>Turma:</strong> {{ turma.codigo }} - {{ turma.disciplina.nome }}</p>
+
+        <hr>
+
+        <form method="POST">
+            
+            {% csrf_token %}
+            
+            <label for="{{ form.titulo.id_for_label }}">Título:</label>
+            {{ form.titulo }}
+            
+            <label for="{{ form.descricao.id_for_label }}">Descrição:</label>
+            {{ form.descricao }}
+            
+            <label for="{{ form.peso.id_for_label }}">Peso na Média:</label>
+            {{ form.peso }}
+            
+            {{ form.non_field_errors }}
+            
+            <br>
+            <button type="submit">Salvar Avaliação</button>
+        </form>
+    </div>
+</body>
+</html>

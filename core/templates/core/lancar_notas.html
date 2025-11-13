@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Lançar Notas</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        table { border-collapse: collapse; width: 400px; }
+        th, td { border: 1px solid #ccc; padding: 8px; }
+        th { background-color: #f4f4f4; }
+        input[type="number"] { width: 60px; }
+        button { background: #007bff; color: white; padding: 10px 15px; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h1>Lançar Notas: {{ avaliacao.titulo }}</h1>
+    <p><strong>Turma:</strong> {{ avaliacao.turma.codigo }}</p>
+    <p><strong>Peso da Avaliação:</strong> {{ avaliacao.peso }}</p>
+
+    <hr>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        {{ formset.management_form }}
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Aluno</th>
+                    <th>Nota (0-10)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in formset %}
+                    <tr>
+                        <td>
+                            {{ form.instance.aluno.user.get_full_name }}
+                        </td>
+                        <td>
+                            {{ form.valor }}
+                            {{ form.valor.errors }}
+                        </td>
+                        {{ form.id }}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <br>
+        <button type="submit">Salvar Notas</button>
+    </form>
+
+</body>
+</html>

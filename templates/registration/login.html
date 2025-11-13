@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Sistema de Notas</title>
+    <style>
+        body { font-family: sans-serif; display: grid; place-items: center; min-height: 90vh; background-color: #f9f9f9; }
+        .login-container { background: #fff; border: 1px solid #ccc; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h2 { text-align: center; margin-top: 0; }
+        form { display: flex; flex-direction: column; width: 300px; }
+        form p { display: flex; flex-direction: column; }
+        form label { margin-bottom: 5px; font-weight: bold; }
+        form input { padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 12px; border: none; cursor: pointer; margin-top: 15px; border-radius: 4px; }
+        .error { color: red; font-size: 0.9em; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Portal Acadêmico</h2>
+
+        {% if form.errors %}
+            <p class="error">Seu usuário ou senha estão incorretos.</p>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <p>
+                <label for="{{ form.username.id_for_label }}">Usuário:</label>
+                {{ form.username }}
+            </p>
+            
+            <p>
+                <label for="{{ form.password.id_for_label }}">Senha:</label>
+                {{ form.password }}
+            </p>
+            
+            <button type="submit">Entrar</button>
+            <input type="hidden" name="next" value="{{ next }}">
+        </form>
+    </div>
+</body>
+</html>

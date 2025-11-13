@@ -55,7 +55,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,3 +125,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# 1. Diz ao Django qual o NOME da URL de login.
+LOGIN_URL = 'login'
+
+# 2. Para onde ir DEPOIS que o login funcionar.
+LOGIN_REDIRECT_URL = 'home'
+
+# 3. Para onde ir DEPOIS que o usuário fizer logout.
+LOGOUT_REDIRECT_URL = 'login'

@@ -1,57 +1,252 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lançar Notas</title>
     <style>
-        body { font-family: sans-serif; margin: 20px; }
-        h1 { color: #333; }
-        table { border-collapse: collapse; width: 400px; }
-        th, td { border: 1px solid #ccc; padding: 8px; }
-        th { background-color: #f4f4f4; }
-        input[type="number"] { width: 60px; }
-        button { background: #007bff; color: white; padding: 10px 15px; border: none; cursor: pointer; }
+        :root {
+            --primary: #4f46e5;
+            /* Indigo moderno */
+            --primary-hover: #4338ca;
+            --bg-color: #f9fafb;
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-sub: #6b7280;
+            --border: #e5e7eb;
+            --focus-ring: rgba(79, 70, 229, 0.2);
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        .breadcrumb {
+            color: var(--text-sub);
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .breadcrumb:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        .subtitle {
+            color: var(--text-sub);
+            margin-top: 5px;
+        }
+
+        /* Card da Tabela */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #f9fafb;
+            text-align: left;
+            padding: 16px 24px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-sub);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+            transition: background-color 0.2s;
+        }
+
+        /* Efeito de Foco na Linha */
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #f9fafb;
+        }
+
+        tr:focus-within td {
+            background-color: #f0fdf4;
+        }
+
+        .student-name {
+            font-weight: 500;
+            color: var(--text-main);
+            display: block;
+        }
+
+        .student-id {
+            font-size: 0.85em;
+            color: var(--text-sub);
+        }
+
+        .grade-input-wrapper {
+            position: relative;
+            width: 100px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+        }
+
+        .error-msg {
+            font-size: 0.75em;
+            color: var(--danger);
+            margin-top: 4px;
+            display: block;
+        }
+
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1), 0 2px 4px -1px rgba(79, 70, 229, 0.06);
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            color: var(--text-sub);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background-color: #f3f4f6;
+            color: var(--text-main);
+        }
     </style>
 </head>
+
 <body>
 
-    <h1>Lançar Notas: {{ avaliacao.titulo }}</h1>
-    <p><strong>Turma:</strong> {{ avaliacao.turma.codigo }}</p>
-    <p><strong>Peso da Avaliação:</strong> {{ avaliacao.peso }}</p>
+    <div class="container">
+        <header>
+            <a href="{% url 'turma_detalhe' avaliacao.turma.id %}" class="breadcrumb">← Voltar para a Turma</a>
+            <h1>{{ avaliacao.titulo }}</h1>
+            <div class="subtitle">
+                Disciplina: {{ avaliacao.turma.disciplina.nome }} • Peso: <strong>{{ avaliacao.peso }}</strong>
+            </div>
+        </header>
 
-    <hr>
+        <form method="POST">
+            {% csrf_token %}
+            {{ formset.management_form }}
 
-    <form method="POST">
-        {% csrf_token %}
-        
-        {{ formset.management_form }}
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>Aluno</th>
-                    <th>Nota (0-10)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for form in formset %}
-                    <tr>
-                        <td>
-                            {{ form.instance.aluno.user.get_full_name }}
-                        </td>
-                        <td>
-                            {{ form.valor }}
-                            {{ form.valor.errors }}
-                        </td>
-                        {{ form.id }}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
-        <br>
-        <button type="submit">Salvar Notas</button>
-    </form>
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Aluno</th>
+                            <th style="text-align: center; width: 150px;">Nota (0-10)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for form in formset %}
+                        <tr>
+                            <td>
+                                <span class="student-name">
+                                    {{ form.instance.aluno.user.get_full_name|default:form.instance.aluno.user.username
+                                    }}
+                                </span>
+                                <span class="student-id">
+                                    Matrícula: {{ form.instance.aluno.matricula }}
+                                </span>
+                                {{ form.id }}
+                            </td>
+                            <td style="text-align: center;">
+                                <div class="grade-input-wrapper" style="margin: 0 auto;">
+                                    {{ form.valor }}
+                                </div>
+                                {% if form.valor.errors %}
+                                <span class="error-msg">{{ form.valor.errors.0 }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="actions">
+                <a href="{% url 'turma_detalhe' avaliacao.turma.id %}" class="btn-secondary">Cancelar</a>
+                <button type="submit" class="btn-primary">Salvar Todas as Notas</button>
+            </div>
+        </form>
+    </div>
 
 </body>
+
 </html>

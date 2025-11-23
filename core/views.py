@@ -118,19 +118,46 @@ def criar_avaliacao(request, turma_id):
 
 @login_required
 def home(request):
-    # Checa se o usuário logado tem um perfil de "professor"
+    # 1. Painel do PROFESSOR
     if hasattr(request.user, 'professor'):
-        # Se sim, renderiza o painel do professor
-        return render(request, 'core/dashboard_professor.html')
+        # Busca as turmas desse professor
+        turmas = request.user.professor.turmas.all().select_related('disciplina')
+        context = {'turmas': turmas}
+        return render(request, 'core/dashboard_professor.html', context)
 
-    # Checa se o usuário logado tem um perfil de "aluno"
+    # 2. Painel do ALUNO
     elif hasattr(request.user, 'aluno'):
-        # Se sim, renderiza o painel do aluno
-        return render(request, 'core/dashboard_aluno.html')
+        # Busca as notas desse aluno
+        aluno_logado = request.user.aluno
+        notas = Nota.objects.filter(aluno=aluno_logado).select_related(
+            'avaliacao__turma__disciplina'
+        )
+        context = {'notas': notas}
+        return render(request, 'core/dashboard_aluno.html', context)
 
-    # Se for um Superusuário sem perfil
+    # 3. Superusuário
     elif request.user.is_superuser:
-        return redirect('admin:index') # Redireciona para o admin
+        return redirect('admin:index')
 
     else:
-        return HttpResponse("Você está logado, mas seu perfil não foi configurado.")
+        return HttpResponse("Perfil não configurado.")
+    
+@login_required
+def turma_detalhe(request, turma_id):
+    turma = get_object_or_404(Turma, id=turma_id)
+    
+    # Segurança: Garante que apenas o professor dono da turma acessa
+    if hasattr(request.user, 'professor'):
+         if turma.professor != request.user.professor:
+             return render(request, 'core/acesso_negado.html')
+    
+    # Busca dados para exibir na tela
+    avaliacoes = turma.avaliacoes.all()
+    alunos = turma.alunos.all()
+
+    context = {
+        'turma': turma,
+        'avaliacoes': avaliacoes,
+        'alunos': alunos
+    }
+    return render(request, 'core/turma_detalhe.html', context)

@@ -1,10 +1,160 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head><title>Painel do Aluno</title></head>
-<body>
-    <h1>Olá, Aluno {{ request.user.get_full_name }}!</h1>
-    <p>Este será o seu painel. Em breve, suas notas aparecerão aqui.</p>
 
-    <p><a href="{% url 'logout' %}">Sair</a></p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Aluno</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --bg-color: #f9fafb;
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-sub: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .welcome {
+            color: var(--text-sub);
+            margin-top: 5px;
+        }
+
+        .btn-logout {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-logout:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: white;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f9fafb;
+            text-align: left;
+            padding: 16px 24px;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            color: var(--text-sub);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.95em;
+            background: #eef2ff;
+            color: var(--primary);
+        }
+
+        .empty-state {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-sub);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>Boletim Online</h1>
+                <div class="welcome">Aluno: {{ request.user.get_full_name }}</div>
+            </div>
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn-logout">Sair</button>
+            </form>
+        </header>
+
+        <div class="card">
+            {% if notas %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Disciplina</th>
+                        <th>Avaliação</th>
+                        <th>Peso</th>
+                        <th style="text-align: right;">Nota</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for nota in notas %}
+                    <tr>
+                        <td style="font-weight: 500;">{{ nota.avaliacao.turma.disciplina.nome }}</td>
+                        <td style="color: var(--text-sub);">{{ nota.avaliacao.titulo }}</td>
+                        <td style="color: var(--text-sub); font-size: 0.9em;">{{ nota.avaliacao.peso }}</td>
+                        <td style="text-align: right;">
+                            <span class="grade-badge">{{ nota.valor }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                Nenhuma nota lançada até o momento.
+            </div>
+            {% endif %}
+        </div>
+    </div>
 </body>
+
 </html>

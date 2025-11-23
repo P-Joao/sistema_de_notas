@@ -1,10 +1,174 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head><title>Painel do Professor</title></head>
-<body>
-    <h1>Olá, Professor {{ request.user.get_full_name }}!</h1>
-    <p>Este será o seu painel. Em breve, suas turmas aparecerão aqui.</p>
 
-    <p><a href="{% url 'logout' %}">Sair</a></p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Professor</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f9fafb;
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-sub: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--text-main);
+        }
+
+        .welcome-text {
+            color: var(--text-sub);
+            margin-top: 5px;
+        }
+
+        .btn-logout {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: #ef4444;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background-color: #fee2e2;
+            border-color: #fca5a5;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .card h2 {
+            margin: 0 0 8px 0;
+            font-size: 1.25rem;
+        }
+
+        .card-meta {
+            color: var(--text-sub);
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            background-color: #e0e7ff;
+            color: var(--primary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.8em;
+        }
+
+        .btn-card {
+            display: block;
+            text-align: center;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 500;
+            margin-top: auto;
+            transition: background-color 0.2s;
+        }
+
+        .btn-card:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-sub);
+            padding: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>Olá, Prof. {{ request.user.first_name }}</h1>
+                <div class="welcome-text">Gerencie suas turmas e avaliações</div>
+            </div>
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn-logout">Sair do Sistema</button>
+            </form>
+        </header>
+
+        {% if turmas %}
+        <div class="grid">
+            {% for turma in turmas %}
+            <div class="card">
+                <div>
+                    <h2>{{ turma.disciplina.nome }}</h2>
+                    <div class="card-meta">
+                        <span class="badge">{{ turma.codigo }}</span>
+                        • {{ turma.ano }}.{{ turma.semestre }}
+                    </div>
+                    <p style="color: var(--text-sub); font-size: 0.9em;">
+                        👥 {{ turma.alunos.count }} alunos matriculados
+                    </p>
+                </div>
+                <a href="{% url 'turma_detalhe' turma.id %}" class="btn-card">Gerenciar Turma →</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h3>Nenhuma turma encontrada</h3>
+            <p>Você não está vinculado a nenhuma disciplina neste semestre.</p>
+        </div>
+        {% endif %}
+    </div>
 </body>
+
 </html>
